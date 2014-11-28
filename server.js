@@ -31,34 +31,11 @@ router.use(function(req, res, next){
 })
 
 router.get('/', function(req, res) {
-  res.json({ message: 'hooray! welcome to our api!' });
-});
-
-
-
-// more routes for our API will happen here
-
-// routes that end in /bears
-
-router.route('/bears')
-
-  // create a bear (accessed at POST http://localhost:8080/api/bears)
-  .post(function(req, res) {
-    console.log(req)
-    console.log(res)
-    var bear = new Bear();    // create a new instance of the Bear model
-    bear.name = req.body.name;  // set the bears name (comes from the request)
-    console.log(bear);
-    // save the bear and check for errors
-    bear.save(function(err) {
-      console.log("****SAVING****");
-      if (err)
-        res.send(err);
-
-      res.json({ message: 'Bear created!' });
-    });
-
+  twit.search(req.query.name, function(data) {
+    tweets = tweetParser().parseTweets(data);
+    res.json(tweets);
   });
+});
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
