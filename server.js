@@ -104,3 +104,5 @@ app.get('/insta', function(req, res, next) {
 // =============================================================================
 
 console.log('Magic happens on port ' + port);
+
+module.exports = server;
