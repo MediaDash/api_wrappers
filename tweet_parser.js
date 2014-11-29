@@ -28,6 +28,7 @@ module.exports = function() {
       reshares: tweetData.retweet_count,
       url: 'https://twitter.com/' + tweetData.user.screen_name + '/status/' + tweetData.id_str
     };
+
     return tweet;
   };
 

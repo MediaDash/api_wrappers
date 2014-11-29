@@ -7,7 +7,7 @@
 
 // call the packages we need
 var express    = require('express');
-var app        = express();         
+var app        = express();
 var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
 var parseInstaObject = require('./instagram_parser.js');
@@ -43,7 +43,7 @@ var twit = new twitter({
     access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
-// instagram api connection, 
+// instagram api connection,
 var ig = require('instagram-node').instagram();
 
 // Instagram API keys, held in Enviroment Variables
@@ -57,6 +57,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var port = process.env.PORT || 9393;    // set our port
+var server = app.listen(port);
+var io = require('socket.io').listen(server);
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -77,7 +79,19 @@ app.get('/twitter', function(req, res, next) {
   });
 });
 
-// Gets recent popular media with a tag, Use Query search 'term=XXX'
+app.get('/twitter_stream', function(req, res, next) {
+  var streamed_tweets = []
+  var term = req.query.term
+  twit.stream('statuses/filter', {track: '#' + term}, function(stream){
+    stream.on('data', function(data) {
+        console.log(util.inspect(tweetParser().parseTweets(({"statuses": [data]}))));
+        streamed_tweets.push(data);
+        io.emit('tweet', data)
+    });
+  });
+});
+
+// Gets recent popular media
 app.get('/insta', function(req, res, next) {
   var searchTag = req.query.term
   ig.tag_media_recent(searchTag, function(err, result, pagination, remaining, limit){
@@ -88,5 +102,5 @@ app.get('/insta', function(req, res, next) {
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
+
 console.log('Magic happens on port ' + port);
