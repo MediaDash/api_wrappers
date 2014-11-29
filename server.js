@@ -56,7 +56,7 @@ var ig = require('instagram-node').instagram();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = pr ocess.env.PORT || 9393;    // set our port
+var port = process.env.PORT || 9393;    // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
