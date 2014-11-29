@@ -1,13 +1,5 @@
 module.exports = function () {
 
-  var parseInstaUserName = function(username) {
-    var userNameArray = [];
-    for( var i=0; i < username.length; i++ ) {
-      userNameArray.push(username[i].text);
-    }
-    return userNameArray;
-  };
-
   var parseInstaObject = function(instagramObject) {
     var instaObject = {
       instagramId: instagramObject.id,
