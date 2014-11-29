@@ -21,6 +21,17 @@ var twit = new twitter({
     access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
+// var mongoose   = require('mongoose');
+// mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
+
+
+
+var parseInstaObject = require('./instagram_parser.js');
+
+var ig = require('instagram-node').instagram();
+    ig.use({ client_id: '4d584911251d49f3851dc85a4e7ea812',
+             client_secret: '85bae91c081d4382a9744a8a9b34ab96'})
+
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,6 +55,15 @@ router.get('/twitter/', function(req, res) {
   twit.search('#' + term, function(data) {
     tweets = tweetParser().parseTweets(data);
     res.json(tweets);
+  });
+});
+
+// Gets recent popular media
+router.get('/insta', function(req, res) {
+  console.log("Inside Instagram Route");
+  ig.media_popular(function(err, result, remaining, limit){
+    insta = parseInstaObject().parseInstaObjects(result);
+    res.json(insta);
   });
 });
 
