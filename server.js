@@ -59,6 +59,17 @@ app.get('/twitter', function(req, res, next) {
   });
 });
 
+app.get('/twitter_stream', function(req, res, next) {
+  var streamed_tweets = []
+  var term = req.query.term
+  twit.stream('statuses/filter', {track: '#' + term}, function(stream) {
+    stream.on('data', function(data) {
+        console.log(util.inspect(data));
+        streamed_tweets.push(data)
+    });
+  });
+});
+
 // Gets recent popular media
 app.get('/insta', function(req, res, next) {
   var searchTagOne = req.query.term
