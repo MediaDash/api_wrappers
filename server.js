@@ -65,7 +65,8 @@ app.get('/twitter_stream', function(req, res, next) {
   twit.stream('statuses/filter', {track: '#' + term}, function(stream) {
     stream.on('data', function(data) {
         console.log(util.inspect(data));
-        streamed_tweets.push(data)
+        streamed_tweets.push(data);
+        res.json(streamed_tweets);
     });
   });
 });
