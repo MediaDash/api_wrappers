@@ -4,21 +4,23 @@ var db = require('../database_config.js');
 
 // Get the Userlist
 
-router.get('/user', function(req, res) {
-  db.collection('user').find().toArray(function(err, items) {
-    console.log(items);
+router.get('/users', function(req, res) {
+  var db = req.db;
+  db.collection('users').find().toArray(function (err, result) {
+    console.log(result);
   });
   res.send(200);
 });
 
 
+router.post('/adduser', function(req,res) {
+  var db = req.db
+  db.collection('users').insert(req.body, function(err, result){
+    res.send(
+      (err === null) ? { msg: '' } : { msg: err }
+      );
+  });
+});
+
+
 module.exports = router;
-
-
-// router.post('/user', function(req, res) {
-//   db.collection('user').insert(req.body, function(err, result) {
-//     res.send(
-//       (err === null) ? { msg: '' } : { msg: err }
-//       );
-//   });
-// });

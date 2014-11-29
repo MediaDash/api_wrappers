@@ -21,10 +21,10 @@ app.use(function(req,res,next){
 
 var routes = require('./routes/index');
 var user = require('./routes/user');
-
+var adduser = require('./routes/user')
 // Routes
-
 app.use('/', routes);
+app.use('/', user);
 app.use('/', user);
 
 
