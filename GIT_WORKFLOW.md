@@ -26,6 +26,14 @@ Push *your_branch* to origin
 git push origin your_branch
 ```
 
-Now submit a pull request and have someone review it (pull down your branch to their local machine, run tests, and approve it).
+Now submit a pull request and have someone review it:
+
+Pull down the branch to their local machine:
+```sh
+git fetch origin/your_branch
+git checkout origin/your_branch
+```
+
+Run the server, run tests, and approve it.
 
 You're done!
