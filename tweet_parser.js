@@ -9,9 +9,7 @@ module.exports = function() {
   };
 
   var parseMedia = function( entites ) {
-    if ( !entites.media ) {
-      return '';
-    } else {
+    if ( "media" in person ) {
       return entites.media[0].media_url;
     }
   };
