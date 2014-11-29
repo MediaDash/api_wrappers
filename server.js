@@ -18,11 +18,11 @@ var MongoClient = require('mongodb').MongoClient;
 // Database Set up
 
 // Connection to the db
-MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
-  if(!err) {
-    console.log("We have the Power Captain");
-  }
-});
+// MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
+//   if(!err) {
+//     console.log("We have the Power Captain");
+//   }
+// });
 
 // var mongoose   = require('mongoose');
 // mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
@@ -56,7 +56,7 @@ var ig = require('instagram-node').instagram();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 9393;    // set our port
+var port = pr ocess.env.PORT || 9393;    // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
