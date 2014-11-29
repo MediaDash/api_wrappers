@@ -7,10 +7,19 @@
 var express    = require('express');    // call express
 var app        = express();         // define our app using express
 var bodyParser = require('body-parser');
-var mongoose   = require('mongoose');
-mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
-var Bear     = require('./app/models/bear');
+// var mongoose   = require('mongoose');
+// mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
+var tweetParser = require('./tweet_parser.js');
 
+// twitter api
+var util = require('util'),
+    twitter = require('twitter');
+var twit = new twitter({
+    consumer_key: process.env.CONSUMER_KEY,
+    consumer_secret: process.env.CONSUMER_SECRET,
+    access_token_key: process.env.ACCESS_TOKEN_KEY,
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET
+});
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -23,15 +32,16 @@ var port = process.env.PORT || 9393;    // set our port
 // =============================================================================
 var router = express.Router();        // get an instance of the express Router
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+// test route to make sure everything is working (accessed at GET http://localhost:9393/api)
 
 router.use(function(req, res, next){
   console.log('Something is happening');
   next();
 })
 
-router.get('/', function(req, res) {
-  twit.search(req.query.name, function(data) {
+router.get('/twitter/', function(req, res) {
+  var term = req.query.term
+  twit.search('#' + term, function(data) {
     tweets = tweetParser().parseTweets(data);
     res.json(tweets);
   });
