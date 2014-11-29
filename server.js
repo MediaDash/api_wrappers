@@ -10,6 +10,7 @@ var express    = require('express');
 var app        = express();         
 var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
+var parseInstaObject = require('./instagram_parser.js');
 var MongoClient = require('mongodb').MongoClient;
 
 //============================================================================
@@ -43,10 +44,9 @@ var twit = new twitter({
 });
 
 // instagram api connection, 
-var parseInstaObject = require('./instagram_parser.js');
+var ig = require('instagram-node').instagram();
 
 // Instagram API keys, held in Enviroment Variables
-var ig = require('instagram-node').instagram();
     ig.use({ client_id: process.env.INSTA_CLIENT_ID,
              client_secret: process.env.INSTA_CLIENT_SECRET })
 
@@ -79,8 +79,8 @@ app.get('/twitter', function(req, res, next) {
 
 // Gets recent popular media with a tag, Use Query search 'term=XXX'
 app.get('/insta', function(req, res, next) {
-  var searchTagOne = req.query.term
-  ig.tag_media_recent(searchTagOne, function(err, result, pagination, remaining, limit){
+  var searchTag = req.query.term
+  ig.tag_media_recent(searchTag, function(err, result, pagination, remaining, limit){
     insta = parseInstaObject().parseInstaObjects(result);
     res.json(insta);
   });
