@@ -8,17 +8,27 @@ module.exports = function() {
     return hashtagsArray;
   };
 
+  var parseMedia = function( entites ) {
+    if ( !entites.media ) {
+      return '';
+    } else {
+      return entites.media[0].media_url;
+    }
+  };
+
   var parseTweet = function(tweetData) {
     var tweet = {
-      id: tweetData.id,
+      tweetId: tweetData.id,
       username: tweetData.user.screen_name,
-      profile_picture: tweetData.user.profile_image_url,
-      description: tweetData.text,
-      hashtags: parseHashtags(tweetData.entities.hashtags),
+      userProfilePic: tweetData.user.profile_image_url,
+      text: tweetData.text,
       location: tweetData.geo,
       timestamp: tweetData.created_at,
+      hashtags: parseHashtags( tweetData.entities.hashtags ),
+      image: parseMedia( tweetData.entities ),
       likes: tweetData.favorite_count,
-      reshares: tweetData.retweet_count
+      reshares: tweetData.retweet_count,
+      url: 'https://twitter.com/' + tweetData.user.screen_name + '/status/' + tweetData.id_str
     };
     return tweet;
   };
@@ -31,5 +41,5 @@ module.exports = function() {
       }
       return tweets;
     }
-  }
-}
+  };
+};
