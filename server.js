@@ -14,6 +14,7 @@ var tweetParser = require('./tweet_parser.js');
 // twitter api
 var util = require('util'),
     twitter = require('twitter');
+
 var twit = new twitter({
     consumer_key: process.env.CONSUMER_KEY,
     consumer_secret: process.env.CONSUMER_SECRET,
@@ -24,13 +25,11 @@ var twit = new twitter({
 // var mongoose   = require('mongoose');
 // mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
 
-
-
 var parseInstaObject = require('./instagram_parser.js');
 
 var ig = require('instagram-node').instagram();
-    ig.use({ client_id: '4d584911251d49f3851dc85a4e7ea812',
-             client_secret: '85bae91c081d4382a9744a8a9b34ab96'})
+    ig.use({ client_id: process.env.INSTA_CLIENT_ID,
+             client_secret: process.env.INSTA_CLIENT_SECRET })
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
