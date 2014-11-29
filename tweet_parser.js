@@ -8,9 +8,9 @@ module.exports = function() {
     return hashtagsArray;
   };
 
-  var parseMedia = function( entites ) {
+  var parseMedia = function( entities ) {
     if ( "media" in entities ) {
-      return entites.media[0].media_url;
+      return entities.media[0].media_url;
     }
   };
 
