@@ -2,31 +2,36 @@ module.exports = function () {
 
   var parseInstaUserName = function(username) {
     var userNameArray = [];
-    for( var i=0; i < username.length; i++) {
-      userNameArray.push(username[i].text)
+    for( var i=0; i < username.length; i++ ) {
+      userNameArray.push(username[i].text);
     }
     return userNameArray;
   };
 
   var parseInstaObject = function(instagramObject) {
     var instaObject = {
-      tags: instagramObject.tags,
+      instagramId: instagramObject.id,
       username: instagramObject.user.username,
-      images: instagramObject.images.standard_resolution.url,
       userProfilePic: instagramObject.user.profile_picture,
-      createdAt: instagramObject.created_time,
-      instaLocation: instagramObject.location
-    }
+      text: instagramObject.caption.text,
+      location: instagramObject.location,
+      timestamp: instagramObject.created_time,
+      hashtags: instagramObject.tags,
+      image: instagramObject.images.standard_resolution.url,
+      likes: instagramObject.likes.count,
+      filter: instagramObject.filter,
+      url: instagramObject.url
+    };
     return instaObject;
   };
 
   return {
-    parseInstaObjects: function(instagramObject) {
-      var insta = [];
-      for ( var i = 0; i < instagramObject.length; i++) {
-        insta.push(parseInstaObject(instagramObject[i]));
+    parseInstaObjects: function(instagramObjects) {
+      var instas = [];
+      for ( var i = 0; i < instagramObjects.length; i++ ) {
+        instas.push( parseInstaObject( instagramObjects[i] ) );
       }
-      return insta;
+      return instas;
     }
-  }
-}
+  };
+};
