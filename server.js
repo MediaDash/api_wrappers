@@ -7,7 +7,7 @@
 
 // call the packages we need
 var express    = require('express');
-var app        = express();         
+var app        = express();
 var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
 var parseInstaObject = require('./instagram_parser.js');
@@ -43,7 +43,7 @@ var twit = new twitter({
     access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
-// instagram api connection, 
+// instagram api connection,
 var ig = require('instagram-node').instagram();
 
 // Instagram API keys, held in Enviroment Variables
@@ -77,7 +77,18 @@ app.get('/twitter', function(req, res, next) {
   });
 });
 
-// Gets recent popular media with a tag, Use Query search 'term=XXX'
+app.get('/twitter_stream', function(req, res, next) {
+  var streamed_tweets = []
+  var term = req.query.term
+  twit.stream('statuses/filter', {track: '#' + term}, function(stream) {
+    stream.on('data', function(data) {
+        console.log(util.inspect(data));
+        streamed_tweets.push(data)
+    });
+  });
+});
+
+// Gets recent popular media
 app.get('/insta', function(req, res, next) {
   var searchTag = req.query.term
   ig.tag_media_recent(searchTag, function(err, result, pagination, remaining, limit){
