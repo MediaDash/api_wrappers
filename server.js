@@ -1,5 +1,3 @@
-// server.js
-
 // BASE SETUP
 // =============================================================================
 
@@ -11,21 +9,24 @@ var app        = express();
 var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
 var parseInstaObject = require('./instagram_parser.js');
-var MongoClient = require('mongodb').MongoClient;
+var db = require('./database_config.js')
 
 //============================================================================
 
-// Database Set up
+// MUST BE ABOVE ROUTES--- I think <----- Remove when sure
+app.use(function(req,res,next){
+  req.db = db;
+  next();
+});
 
-// Connection to the db
-// MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
-//   if(!err) {
-//     console.log("We have the Power Captain");
-//   }
-// });
+var routes = require('./routes/index');
+var user = require('./routes/user');
 
-// var mongoose   = require('mongoose');
-// mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
+// Routes
+
+app.use('/', routes);
+app.use('/', user);
+
 
 //==============================================================================
 
@@ -102,7 +103,7 @@ app.get('/insta', function(req, res, next) {
 
 // START THE SERVER
 // =============================================================================
-
-console.log('Magic happens on port ' + port);
-
 module.exports = server;
+
+app.listen(port);
+console.log('Server Up on Port ' + port);
