@@ -9,8 +9,13 @@ var app        = express();         // define our app using express
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
-var Bear     = require('./app/models/bear');
 
+
+var parseInstaObject = require('./instagram_parser.js');
+
+var ig = require('instagram-node').instagram();
+    ig.use({ client_id: '4d584911251d49f3851dc85a4e7ea812',
+             client_secret: '85bae91c081d4382a9744a8a9b34ab96'})
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -31,34 +36,22 @@ router.use(function(req, res, next){
 })
 
 router.get('/', function(req, res) {
-  res.json({ message: 'hooray! welcome to our api!' });
+  twit.search(req.query.name, function(data) {
+    tweets = tweetParser().parseTweets(data);
+    res.json(tweets);
+  });
+});
+
+// Gets recent popular media
+router.get('/insta', function(req, res) {
+  console.log("Inside Instagram Route");
+  ig.media_popular(function(err, result, remaining, limit){
+    insta = parseInstaObject().parseInstaObjects(result);
+    res.json(insta);
+  });
 });
 
 
-
-// more routes for our API will happen here
-
-// routes that end in /bears
-
-router.route('/bears')
-
-  // create a bear (accessed at POST http://localhost:8080/api/bears)
-  .post(function(req, res) {
-    console.log(req)
-    console.log(res)
-    var bear = new Bear();    // create a new instance of the Bear model
-    bear.name = req.body.name;  // set the bears name (comes from the request)
-    console.log(bear);
-    // save the bear and check for errors
-    bear.save(function(err) {
-      console.log("****SAVING****");
-      if (err)
-        res.send(err);
-
-      res.json({ message: 'Bear created!' });
-    });
-
-  });
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
