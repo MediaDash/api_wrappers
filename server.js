@@ -44,14 +44,14 @@ var router = express.Router();        // get an instance of the express Router
 
 // test route to make sure everything is working (accessed at GET http://localhost:9393/api)
 
-router.use(function(req, res, next){
+app.use(function(req, res, next){
   console.log("Request being made...");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 })
 
-router.get('/twitter/', function(req, res, next) {
+app.get('/twitter', function(req, res, next) {
   var term = req.query.term
   twit.search('#' + term, function(data) {
     tweets = tweetParser().parseTweets(data);
@@ -60,17 +60,13 @@ router.get('/twitter/', function(req, res, next) {
 });
 
 // Gets recent popular media
-router.get('/insta', function(req, res, next) {
-  var searchTagOne = req.query.tag
+app.get('/insta', function(req, res, next) {
+  var searchTagOne = req.query.term
   ig.tag_media_recent(searchTagOne, function(err, result, pagination, remaining, limit){
     insta = parseInstaObject().parseInstaObjects(result);
     res.json(insta);
   });
 });
-
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
 
 // START THE SERVER
 // =============================================================================
