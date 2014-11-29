@@ -30,6 +30,7 @@ var parseInstaObject = require('./instagram_parser.js');
 var ig = require('instagram-node').instagram();
     ig.use({ client_id: process.env.INSTA_CLIENT_ID,
              client_secret: process.env.INSTA_CLIENT_SECRET })
+var searchTagOne = 'money'
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -61,8 +62,7 @@ router.get('/twitter/', function(req, res, next) {
 
 // Gets recent popular media
 router.get('/insta', function(req, res) {
-  console.log("Inside Instagram Route");
-  ig.media_popular(function(err, result, remaining, limit){
+  var instagramSearch = ig.tag_media_recent(searchTagOne, function(err, result, pagination, remaining, limit){
     insta = parseInstaObject().parseInstaObjects(result);
     res.json(insta);
   });
