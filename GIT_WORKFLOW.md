@@ -9,16 +9,20 @@ git add .
 git commit -m 'my local changes'
 ```
 
-Fetch master from origin and rebase your branch with them:
+Switch to master branch, fetch it from origin:
 ```sh
+git checkout master
 git pull origin master
+```
+
+Switch back to your_branch and rebase your branch with master:
+```sh
+git checkout your_branch
 git rebase master
 ```
 
-Add your changes and push *your_branch*
+Push *your_branch* to origin
 ```sh
-git add .
-git commit -m 'rebased master'
 git push origin your_branch
 ```
 
