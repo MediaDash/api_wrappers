@@ -35,11 +35,13 @@ var router = express.Router();        // get an instance of the express Router
 // test route to make sure everything is working (accessed at GET http://localhost:9393/api)
 
 router.use(function(req, res, next){
-  console.log('Something is happening');
+  console.log("Request being made...");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 })
 
-router.get('/twitter/', function(req, res) {
+router.get('/twitter/', function(req, res, next) {
   var term = req.query.term
   twit.search('#' + term, function(data) {
     tweets = tweetParser().parseTweets(data);
