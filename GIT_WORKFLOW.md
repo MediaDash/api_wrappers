@@ -28,9 +28,9 @@ git push origin your_branch
 
 Now submit a pull request and have someone review it:
 
-Pull down the branch to their local machine:
+Have your reviewe refresh the local clone, then checkout origin/your_branch on their machine:
 ```sh
-git fetch origin/your_branch
+git fetch origin
 git checkout origin/your_branch
 ```
 
