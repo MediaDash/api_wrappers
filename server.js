@@ -26,10 +26,18 @@ var twit = new twitter({
 // mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
 
 var parseInstaObject = require('./instagram_parser.js');
+var mongoose   = require('mongoose');
+mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
 
 var ig = require('instagram-node').instagram();
     ig.use({ client_id: process.env.INSTA_CLIENT_ID,
              client_secret: process.env.INSTA_CLIENT_SECRET })
+
+var parseInstaObject = require('./instagram_parser.js');
+
+var ig = require('instagram-node').instagram();
+    ig.use({ client_id: '4d584911251d49f3851dc85a4e7ea812',
+             client_secret: '85bae91c081d4382a9744a8a9b34ab96'})
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
