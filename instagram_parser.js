@@ -24,7 +24,7 @@ module.exports = function () {
     parseInstaObjects: function(instagramObject) {
       var insta = [];
       for ( var i = 0; i < instagramObject.length; i++) {
-        insta.push(parseInstaObject(instagramObject.attribution));
+        insta.push(parseInstaObject(instagramObject[i]));
       }
       return insta;
     }
