@@ -20,6 +20,7 @@ module.exports = function() {
       likes: tweetData.favorite_count,
       reshares: tweetData.retweet_count
     };
+
     return tweet;
   };
 

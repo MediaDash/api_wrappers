@@ -37,6 +37,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var port = process.env.PORT || 9393;    // set our port
+var server = app.listen(port);
+var io = require('socket.io').listen(server);
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -62,11 +64,11 @@ app.get('/twitter', function(req, res, next) {
 app.get('/twitter_stream', function(req, res, next) {
   var streamed_tweets = []
   var term = req.query.term
-  twit.stream('statuses/filter', {track: '#' + term}, function(stream) {
+  twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-        console.log(util.inspect(data));
+        console.log(util.inspect(tweetParser().parseTweets(({"statuses": [data]}))));
         streamed_tweets.push(data);
-        res.json(streamed_tweets);
+        io.emit('tweet', data)
     });
   });
 });
@@ -82,5 +84,5 @@ app.get('/insta', function(req, res, next) {
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
+
 console.log('Magic happens on port ' + port);
