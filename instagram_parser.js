@@ -2,7 +2,9 @@ module.exports = function () {
 
   var getText = function(instagramObject) {
     if("caption" in instagramObject) {
-      return instagramObject.caption.text;
+      if("text" in instagramObject.caption) {
+        return instagramObject.caption.text;
+      }
     }
   };
 
