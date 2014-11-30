@@ -10,7 +10,7 @@ var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
 var parseInstaObject = require('./instagram_parser.js');
 var mongo = require('mongoskin');
-var db = require('./database_config.js')
+var db = require('./database_config.js');
 
 //============================================================================
 
@@ -22,7 +22,7 @@ app.use(function(req,res,next){
 
 var routes = require('./routes/index');
 var term = require('./routes/term');
-var addterm = require('./routes/term')
+var addterm = require('./routes/term');
 // Routes
 app.use('/', routes);
 app.use('/', term);
@@ -48,7 +48,7 @@ var ig = require('instagram-node').instagram();
 
 // Instagram API keys, held in Enviroment Variables
     ig.use({ client_id: process.env.INSTA_CLIENT_ID,
-             client_secret: process.env.INSTA_CLIENT_SECRET })
+             client_secret: process.env.INSTA_CLIENT_SECRET });
 
 //===============================================================================
 
@@ -69,12 +69,17 @@ app.use(function(req, res, next){
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-})
+});
 
 app.get('/twitter', function(req, res, next) {
-  var term = req.query.term
+  var tweets, term;
+  term = req.query.term;
   twit.search('#' + term, function(data) {
-    tweets = tweetParser().parseTweets(data);
+    if (data) {
+      tweets = tweetParser().parseTweets(data);
+    } else {
+      tweets = {};
+    }
     res.json(tweets);
   });
 });
@@ -83,13 +88,18 @@ app.get('/twitter', function(req, res, next) {
 // The returned object from Twitter is persisted to our DB
 // Also supplied through io.emit to our front end
 app.get('/twitter_stream', function(req, res, next) {
-  var term = req.query.term
+  var term;
+  term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-      io.emit('tweet', data)
+      io.emit('tweet', data);
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
       db.collection('term').insert(twitData, function(err, result){
-        (err === null) ? { msg: '' } : { msg: err };
+        if ( !err ) {
+          return { msg: '' };
+        } else {
+          return { msg: err };
+        }
       });
     });
   });
@@ -97,9 +107,14 @@ app.get('/twitter_stream', function(req, res, next) {
 
 // Gets recent popular media
 app.get('/insta', function(req, res, next) {
-  var searchTag = req.query.term
+  var searchTag;
+  searchTag = req.query.term;
   ig.tag_media_recent(searchTag, function(err, result, pagination, remaining, limit){
-    insta = parseInstaObject().parseInstaObjects(result);
+    if (result) {
+      insta = parseInstaObject().parseInstaObjects(result);
+    } else {
+      insta = {};
+    }
     res.json(insta);
   });
 });
