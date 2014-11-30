@@ -20,7 +20,6 @@
   },
   "scripts": {
     "test": "mocha test",
-    "mongoskin": "1.4.4",
-
+    "mongoskin": "1.4.4"
   }
 }

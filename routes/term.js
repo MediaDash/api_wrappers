@@ -4,18 +4,20 @@ var db = require('../database_config.js');
 
 // Get the Userlist
 
-router.get('/users', function(req, res) {
+router.get('/term', function(req, res) {
   var db = req.db;
-  db.collection('users').find().toArray(function (err, result) {
+  var list;
+  db.collection('term').find().toArray(function (err, result) {
+    list = result;
     console.log(result);
+    res.json(list);
   });
-  res.send(200);
 });
 
 
-router.post('/adduser', function(req,res) {
+router.post('/addterm', function(req,res) {
   var db = req.db
-  db.collection('users').insert(req.body, function(err, result){
+  db.collection('term').insert(req.body, function(err, result){
     res.send(
       (err === null) ? { msg: '' } : { msg: err }
       );

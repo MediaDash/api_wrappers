@@ -9,6 +9,7 @@ var app        = express();
 var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
 var parseInstaObject = require('./instagram_parser.js');
+var mongo = require('mongoskin');
 var db = require('./database_config.js')
 
 //============================================================================
@@ -20,12 +21,12 @@ app.use(function(req,res,next){
 });
 
 var routes = require('./routes/index');
-var user = require('./routes/user');
-var adduser = require('./routes/user')
+var term = require('./routes/term');
+var addterm = require('./routes/term')
 // Routes
 app.use('/', routes);
-app.use('/', user);
-app.use('/', user);
+app.use('/', term);
+app.use('/', term);
 
 
 //==============================================================================
@@ -81,13 +82,19 @@ app.get('/twitter', function(req, res, next) {
 });
 
 app.get('/twitter_stream', function(req, res, next) {
-  var streamed_tweets = []
   var term = req.query.term
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-        console.log(util.inspect(tweetParser().parseTweets(({"statuses": [data]}))));
-        streamed_tweets.push(data);
         io.emit('tweet', data)
+        var twitData = (tweetParser().parseTweets({"statuses": [data]}));
+        console.log(twitData);
+        mongo.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node', function(err, db) {
+          var collection = db.collection('term');
+          (err === null) ? { msg: '' } : { msg: err };
+          collection.insert(twitData, function(err, result){
+            (err === null) ? { msg: '' } : { msg: err };
+          });
+        });
     });
   });
 });
@@ -103,7 +110,6 @@ app.get('/insta', function(req, res, next) {
 
 // START THE SERVER
 // =============================================================================
-module.exports = server;
-
-app.listen(port);
 console.log('Server Up on Port ' + port);
+
+module.exports = server;
