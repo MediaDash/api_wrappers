@@ -1,5 +1,3 @@
-// server.js
-
 // BASE SETUP
 // =============================================================================
 
@@ -11,21 +9,23 @@ var app        = express();
 var bodyParser = require('body-parser');
 var tweetParser = require('./tweet_parser.js');
 var parseInstaObject = require('./instagram_parser.js');
-var MongoClient = require('mongodb').MongoClient;
+var mongo = require('mongoskin');
+var db = require('./database_config.js')
 
 //============================================================================
 
-// Database Set up
+// MUST BE ABOVE ROUTES--- I think <----- Remove when sure
+app.use(function(req,res,next){
+  req.db = db;
+  next();
+});
 
-// Connection to the db
-// MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
-//   if(!err) {
-//     console.log("We have the Power Captain");
-//   }
-// });
-
-// var mongoose   = require('mongoose');
-// mongoose.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node');
+var routes = require('./routes/index');
+var term = require('./routes/term');
+var addterm = require('./routes/term')
+// Routes
+app.use('/', routes);
+app.use('/', term);
 
 //==============================================================================
 
@@ -79,14 +79,18 @@ app.get('/twitter', function(req, res, next) {
   });
 });
 
+// Streams twitter hastags for a supplied query search term
+// The returned object from Twitter is persisted to our DB
+// Also supplied through io.emit to our front end
 app.get('/twitter_stream', function(req, res, next) {
-  var streamed_tweets = []
   var term = req.query.term
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-        console.log(util.inspect(tweetParser().parseTweets(({"statuses": [data]}))));
-        streamed_tweets.push(data);
-        io.emit('tweet', data)
+      io.emit('tweet', data)
+      var twitData = (tweetParser().parseTweets({"statuses": [data]}));
+      db.collection('term').insert(twitData, function(err, result){
+        (err === null) ? { msg: '' } : { msg: err };
+      });
     });
   });
 });
@@ -102,7 +106,6 @@ app.get('/insta', function(req, res, next) {
 
 // START THE SERVER
 // =============================================================================
-
-console.log('Magic happens on port ' + port);
+console.log('Server Up on Port ' + port);
 
 module.exports = server;
