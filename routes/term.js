@@ -14,15 +14,4 @@ router.get('/term', function(req, res) {
   });
 });
 
-
-router.post('/addterm', function(req,res) {
-  var db = req.db
-  db.collection('term').insert(req.body, function(err, result){
-    res.send(
-      (err === null) ? { msg: '' } : { msg: err }
-      );
-  });
-});
-
-
 module.exports = router;

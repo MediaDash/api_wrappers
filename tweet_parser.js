@@ -35,7 +35,6 @@ module.exports = function() {
   return {
     parseTweets: function(tweetsData) {
       var tweets = [];
-      console.log(tweetsData);
       for( var i = 0; i < tweetsData.statuses.length; i++ ) {
         tweets.push(parseTweet(tweetsData.statuses[i]));
       }

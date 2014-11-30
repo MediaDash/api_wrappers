@@ -26,8 +26,6 @@ var addterm = require('./routes/term')
 // Routes
 app.use('/', routes);
 app.use('/', term);
-app.use('/', term);
-
 
 //==============================================================================
 
@@ -81,20 +79,18 @@ app.get('/twitter', function(req, res, next) {
   });
 });
 
+// Streams twitter hastags for a supplied query search term
+// The returned object from Twitter is persisted to our DB
+// Also supplied through io.emit to our front end
 app.get('/twitter_stream', function(req, res, next) {
   var term = req.query.term
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-        io.emit('tweet', data)
-        var twitData = (tweetParser().parseTweets({"statuses": [data]}));
-        console.log(twitData);
-        mongo.connect('mongodb://mediadash:mediadash1@ds053370.mongolab.com:53370/testing_node', function(err, db) {
-          var collection = db.collection('term');
-          (err === null) ? { msg: '' } : { msg: err };
-          collection.insert(twitData, function(err, result){
-            (err === null) ? { msg: '' } : { msg: err };
-          });
-        });
+      io.emit('tweet', data)
+      var twitData = (tweetParser().parseTweets({"statuses": [data]}));
+      db.collection('term').insert(twitData, function(err, result){
+        (err === null) ? { msg: '' } : { msg: err };
+      });
     });
   });
 });
