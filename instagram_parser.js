@@ -1,11 +1,17 @@
 module.exports = function () {
 
+  var getText = function(instagramObject) {
+    if("caption" in instagramObject) {
+      return instagramObject.caption.text;
+    }
+  };
+
   var parseInstaObject = function(instagramObject) {
     var instaObject = {
       instagramId: instagramObject.id,
       username: instagramObject.user.username,
       userProfilePic: instagramObject.user.profile_picture,
-      text: instagramObject.caption.text,
+      text: getText(instagramObject),
       location: instagramObject.location,
       timestamp: instagramObject.created_time,
       hashtags: instagramObject.tags,
