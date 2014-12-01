@@ -2,7 +2,7 @@ module.exports = function () {
 
   var getText = function(instagramObject) {
     if("caption" in instagramObject) {
-      if("text" in instagramObject.caption) {
+      if(instagramObject.caption && "text" in instagramObject.caption) {
         return instagramObject.caption.text;
       }
     }
