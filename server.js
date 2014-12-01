@@ -67,14 +67,14 @@ var io = require('socket.io').listen(http)
 var router = express.Router();
 
 app.use(function(req, res, next){
-  console.log("Request being made...");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
 app.get('/', function(req, res, next){
-  res.redirect('http://localhost:9000/#/')
+  res.redirect('http://localhost:9000/#/');
+  // res.sendfile('test.html');
 })
 
 app.get('/twitter', function(req, res, next) {
@@ -135,6 +135,9 @@ http.listen(port, function(){
 
 io.on('connection', function(socket){
     console.log("CONNECTED!!")
-})
+    socket.on('tweet', function(data){
+      console.log(data);
+    });
+});
 
 module.exports = server;
