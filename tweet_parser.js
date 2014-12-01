@@ -18,7 +18,7 @@ module.exports = function() {
     var tweet = {
       tweetId: tweetData.id,
       username: tweetData.user.screen_name,
-      userProfilePic: tweetData.user.profile_image_url,
+      userProfilePic: tweetData.user.profile_image_url.replace('_normal',''),
       text: tweetData.text,
       location: tweetData.geo,
       timestamp: tweetData.created_at,

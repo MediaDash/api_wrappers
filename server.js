@@ -75,7 +75,7 @@ app.get('/twitter', function(req, res, next) {
   var tweets, term;
   term = req.query.term;
   twit.search('#' + term, function(data) {
-    if (data) {
+    if (data && data.statuses && data.statuses.length) {
       tweets = tweetParser().parseTweets(data);
     } else {
       tweets = {};
