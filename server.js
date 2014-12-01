@@ -119,6 +119,18 @@ app.get('/insta', function(req, res, next) {
   });
 });
 
+// Uses the InstagramId as the next search peram entered through query.
+// SHOULD BE DOCUMENTED!
+app.get('/instaRecent', function(req, res, next) {
+  var searchTag, minTagId;
+  searchTag = req.query.term;
+  minId = req.query.minId;
+  var longsearch = function(err, result, pagination, remainging, limit){
+    var insta = parseInstaObject().parseInstaObjects(result);
+    res.json(insta);
+  };
+  ig.tag_media_recent(searchTag, minId, longsearch);
+});
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
