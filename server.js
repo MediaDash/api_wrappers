@@ -65,7 +65,8 @@ var socket_io = require('socket.io')({
     "polling duration": 10
 });
 
-var io = socket_io.listen(http);
+var io = socket_io.listen(3000);
+console.log(http);
 
 // ROUTES FOR OUR API
 // =============================================================================
