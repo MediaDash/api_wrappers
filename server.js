@@ -20,6 +20,14 @@ app.use(function(req,res,next){
   next();
 });
 
+app.use(function(req, res, next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+
+  next();
+});
+
 var routes = require('./routes/index');
 var term = require('./routes/term');
 var addterm = require('./routes/term');
@@ -58,6 +66,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 9393;    // set our port
 
+var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
     "transports": ["xhr-polling"],
@@ -71,14 +80,6 @@ console.log(http);
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();
-
-app.use(function(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-
-  next();
-});
 
 app.get('/twitter', function(req, res, next) {
   var tweets, term;
@@ -178,15 +179,13 @@ app.get('/instaRecent', function(req, res, next) {
   ig.tag_media_recent(searchTag, longsearch);
 });
 
-var server = app.listen(3000);
-
 
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
 
 http.listen(port, function(){
-  console.log('listening on *:9393');
+  console.log('listening on ' + port);
 });
 
 io.on('connection', function(socket){
