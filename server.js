@@ -57,15 +57,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var port = process.env.PORT || 9393;    // set our port
-var server = app.listen(port);
-var io = require('socket.io').listen(server);
+
+var server = app.listen(3000);
+var http = require('http').Server(app)
+var io = require('socket.io').listen(http)
 
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();
 
 app.use(function(req, res, next){
-  console.log("Request being made...");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
@@ -92,8 +93,8 @@ app.get('/twitter_stream', function(req, res, next) {
   term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-      io.emit('tweet', data);
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
+      io.emit('tweet', twitData);
       db.collection('term').insert(twitData, function(err, result){
         if ( !err ) {
           return { msg: '' };
@@ -145,5 +146,13 @@ app.get('/instaRecent', function(req, res, next) {
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
+
+http.listen(port, function(){
+  console.log('listening on *:9393');
+});
+
+io.on('connection', function(socket){
+    console.log("CONNECTED!!")
+});
 
 module.exports = server;
