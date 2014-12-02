@@ -64,7 +64,8 @@ var socket_io = require('socket.io')({
     "polling duration": 10
 });
 
-var io = socket_io.listen(http);
+var io = socket_io.listen(http, {log: false, origins:'*'});
+
 console.log(http);
 
 // ROUTES FOR OUR API
@@ -74,6 +75,8 @@ var router = express.Router();
 app.use(function(req, res, next){
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+
   next();
 });
 
