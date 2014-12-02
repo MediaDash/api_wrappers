@@ -94,9 +94,9 @@ app.get('/twitter_stream', function(req, res, next) {
   term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-      console.log(data.id);
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
-      io.emit('tweet', data);
+      console.log(data.user.screen_name);
+      io.emit('tweet', twitData);
       db.collection('term').insert(twitData, function(err, result){
         if ( !err ) {
           return { msg: '' };
