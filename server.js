@@ -95,13 +95,13 @@ app.get('/twitter_stream', function(req, res, next) {
     stream.on('data', function(data) {
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
       io.emit('tweet', twitData);
-      db.collection('term').insert(twitData, function(err, result){
-        if ( !err ) {
-          return { msg: '' };
-        } else {
-          return { msg: err };
-        }
-      });
+      // db.collection('term').insert(twitData, function(err, result){
+      //   if ( !err ) {
+      //     return { msg: '' };
+      //   } else {
+      //     return { msg: err };
+      //   }
+      // });
     });
   });
 });
