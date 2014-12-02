@@ -128,7 +128,7 @@ app.get('/instaRecent', function(req, res, next) {
   maxTimestamp = req.query.maxTimestamp;
   instas = []
   respondToClient = function() {
-    res.json(instas.length);
+    res.json(instas);
   };
   var longsearch = function(err, result, pagination, remainging, limit){
     instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
