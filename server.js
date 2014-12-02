@@ -72,11 +72,6 @@ app.use(function(req, res, next){
   next();
 });
 
-app.get('/', function(req, res, next){
-  res.redirect('http://localhost:9000/#/');
-  // res.sendfile('test.html');
-})
-
 app.get('/twitter', function(req, res, next) {
   var tweets, term;
   term = req.query.term;
@@ -95,11 +90,13 @@ app.get('/twitter', function(req, res, next) {
 // Also supplied through io.emit to our front end
 app.get('/twitter_stream', function(req, res, next) {
   var term;
+  console.log('QUERY FROM ANGULAR HIT HERE');
   term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-      io.emit('tweet', data);
+      console.log(data.id);
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
+      io.emit('tweet', data);
       db.collection('term').insert(twitData, function(err, result){
         if ( !err ) {
           return { msg: '' };
@@ -158,9 +155,6 @@ http.listen(port, function(){
 
 io.on('connection', function(socket){
     console.log("CONNECTED!!")
-    socket.on('tweet', function(data){
-      console.log(data);
-    });
 });
 
 module.exports = server;
