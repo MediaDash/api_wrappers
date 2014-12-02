@@ -70,7 +70,6 @@ var port = process.env.PORT || 9393;    // set our port
 var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')(http, {
-    "origins": 'http://salty-journey-1875.herokuapp.com'
     "transports": ["xhr-polling"],
     "polling duration": 10
 });
