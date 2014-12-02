@@ -21,7 +21,8 @@ app.use(function(req,res,next){
 });
 
 app.use(function(req, res, next){
-  res.set("Access-Control-Allow-Origin", "*");
+  // res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Origin", "http://"+req.headers.host+':9000');
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.set("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
 
