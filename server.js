@@ -63,7 +63,7 @@ var http = require('http').Server(app);
 var io = require('socket.io').listen(http)({
     "transports", ["xhr-polling"],
     "polling duration", 10;
-})
+});
 
 // ROUTES FOR OUR API
 // =============================================================================
