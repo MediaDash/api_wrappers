@@ -60,10 +60,12 @@ var port = process.env.PORT || 9393;    // set our port
 
 var server = app.listen(3000);
 var http = require('http').Server(app);
-var io = require('socket.io').listen(http)({
+var socket_io = require('socket.io')({
     "transports": ["xhr-polling"],
-    "polling duration": 10;
+    "polling duration": 10
 });
+
+var io = socket_io.listen(http);
 
 // ROUTES FOR OUR API
 // =============================================================================
