@@ -119,6 +119,29 @@ app.get('/insta', function(req, res, next) {
   });
 });
 
+// Uses the InstagramId as the next search peram entered through query.
+// SHOULD BE DOCUMENTED!
+app.get('/instaRecent', function(req, res, next) {
+  var searchTag, maxTimestamp, instas, instasAfterTime, respondToClient;
+  searchTag = req.query.term;
+  maxTimestamp = req.query.maxTimestamp;
+  instas = []
+  respondToClient = function() {
+    res.json(instas.length);
+  };
+  var longsearch = function(err, result, pagination, remainging, limit){
+    instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
+    for ( var i = 0; i < instasAfterTime.length; i++ ) {
+      instas.push( instasAfterTime[i] );
+    }
+      if (instas.length < 101 || instasAfterTime === 0) {
+        pagination.next(longsearch);
+      } else {
+        respondToClient();
+      }
+    };
+  ig.tag_media_recent(searchTag, longsearch);
+});
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
