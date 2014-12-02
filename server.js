@@ -111,6 +111,9 @@ app.get('/insta', function(req, res, next) {
   var searchTag;
   searchTag = req.query.term;
   ig.tag_media_recent(searchTag, function(err, result, pagination, remaining, limit){
+    if(err) {
+      console.log(err);
+    }
     if (result) {
       insta = parseInstaObject().parseInstaObjects(result);
     } else {
@@ -127,7 +130,9 @@ app.get('/instaLatest', function(req, res, next) {
   maxTimestamp = req.query.maxTimestamp;
   instas = [];
   var search = function(err, result, pagination, remainging, limit){
-    console.log(err);
+    if(err) {
+      console.log(err);
+    }
     instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
     for ( var i = 0; i < instasAfterTime.length; i++ ) {
       instas.push( instasAfterTime[i] );
@@ -148,18 +153,23 @@ app.get('/instaRecent', function(req, res, next) {
     res.json(instas);
   };
   var longsearch = function(err, result, pagination, remainging, limit){
-    instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
-    for ( var i = 0; i < instasAfterTime.length; i++ ) {
-      instas.push( instasAfterTime[i] );
-    }
+    if(err) {
+      console.log(err);
+    } else {
+      instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
+      for ( var i = 0; i < instasAfterTime.length; i++ ) {
+        instas.push( instasAfterTime[i] );
+      }
       if (instas.length < 101 || instasAfterTime === 0) {
         pagination.next(longsearch);
       } else {
         respondToClient();
       }
-    };
+    }
+  };
   ig.tag_media_recent(searchTag, longsearch);
 });
+
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
@@ -169,7 +179,7 @@ http.listen(port, function(){
 });
 
 io.on('connection', function(socket){
-    console.log("CONNECTED!!")
+    console.log("CONNECTED!!");
 });
 
 module.exports = server;
