@@ -58,7 +58,6 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 9393;    // set our port
 
-var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
     "transports": ["xhr-polling"],
@@ -176,6 +175,9 @@ app.get('/instaRecent', function(req, res, next) {
   ig.tag_media_recent(searchTag, longsearch);
 });
 
+var server = app.listen(3000);
+
+
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
@@ -189,3 +191,4 @@ io.on('connection', function(socket){
 });
 
 module.exports = server;
+
