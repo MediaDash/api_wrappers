@@ -59,8 +59,8 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 9393;    // set our port
 
 var server = app.listen(3000);
-var http = require('http').Server(app)
-var io = require('socket.io').listen(http)
+var http = require('http').Server(app);
+var io = require('socket.io').listen(http);
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -120,13 +120,30 @@ app.get('/insta', function(req, res, next) {
   });
 });
 
+
+app.get('/instaLatest', function(req, res, next) {
+  var searchTag, maxTimestamp, instas, instasAfterTime;
+  searchTag = req.query.term;
+  maxTimestamp = req.query.maxTimestamp;
+  instas = [];
+  var search = function(err, result, pagination, remainging, limit){
+    console.log(err);
+    instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
+    for ( var i = 0; i < instasAfterTime.length; i++ ) {
+      instas.push( instasAfterTime[i] );
+    }
+    res.json(instas);
+    };
+  ig.tag_media_recent(searchTag, search);
+});
+
 // Uses the InstagramId as the next search peram entered through query.
 // SHOULD BE DOCUMENTED!
 app.get('/instaRecent', function(req, res, next) {
   var searchTag, maxTimestamp, instas, instasAfterTime, respondToClient;
   searchTag = req.query.term;
   maxTimestamp = req.query.maxTimestamp;
-  instas = []
+  instas = [];
   respondToClient = function() {
     res.json(instas);
   };
