@@ -61,6 +61,10 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 9393;    // set our port
 
+var server = app.listen(3000);
+// var http = require('http').Server(app)
+// var io = require('socket.io').listen(http)
+
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
     "origins": '*',
@@ -69,7 +73,6 @@ var socket_io = require('socket.io')({
 });
 
 var io = socket_io.listen(http, {log: false, origins:'*'});
-var server = app.listen(3000);
 
 
 // ROUTES FOR OUR API
@@ -99,13 +102,13 @@ app.get('/twitter_stream', function(req, res, next) {
     stream.on('data', function(data) {
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
       io.emit('tweet', twitData);
-      // db.collection('term').insert(twitData, function(err, result){
-      //   if ( !err ) {
-      //     return { msg: '' };
-      //   } else {
-      //     return { msg: err };
-      //   }
-      // });
+      db.collection('term').insert(twitData, function(err, result){
+        if ( !err ) {
+          return { msg: '' };
+        } else {
+          return { msg: err };
+        }
+      });
     });
   });
 });
