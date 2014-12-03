@@ -72,7 +72,7 @@ var socket_io = require('socket.io')({
     "polling duration": 10
 });
 
-var io = socket_io.listen(http, {log: false, origins:'*:*'});
+var io = socket_io.listen(http, {log: false, origins:'*'});
 
 // ROUTES FOR OUR API
 // =============================================================================
