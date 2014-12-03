@@ -62,17 +62,17 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 9393;    // set our port
 
 var server = app.listen(3000);
-// var http = require('http').Server(app)
-// var io = require('socket.io').listen(http)
+var http = require('http').Server(app)
+var io = require('socket.io').listen(http)
 
-var http = require('http').Server(app);
-var socket_io = require('socket.io')({
-    "origins": '*',
-    "transports": ['xhr-polling', 'websocket', 'json-polling', 'htmlfile', 'flashsocket'],
-    "polling duration": 10
-});
+// var http = require('http').Server(app);
+// var socket_io = require('socket.io')({
+//     "origins": '*',
+//     "transports": ['xhr-polling', 'websocket', 'json-polling', 'htmlfile', 'flashsocket'],
+//     "polling duration": 10
+// });
 
-var io = socket_io.listen(http, {log: false, origins:'*'});
+// var io = socket_io.listen(http, {log: false, origins:'*'});
 
 
 // ROUTES FOR OUR API
@@ -103,7 +103,7 @@ app.get('/twitter_stream', function(req, res, next) {
     stream.on('data', function(data) {
       console.log(data)
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
-      io.emit('tweet', twitData);
+      // io.emit('tweet', twitData);
       db.collection('term').insert(twitData, function(err, result){
         if ( !err ) {
           return { msg: '' };
