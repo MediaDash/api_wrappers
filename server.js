@@ -88,7 +88,7 @@ app.get('/twitter', function(req, res, next) {
     } else {
       tweets = {};
     }
-    io.emit('tweets', tweets);
+    // io.emit('tweets', tweets);
     res.json(tweets);
   });
 });
@@ -103,7 +103,7 @@ app.get('/twitter_stream', function(req, res, next) {
     stream.on('data', function(data) {
       console.log(data)
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
-      // io.emit('tweet', twitData);
+      io.emit('tweet', twitData);
       db.collection('term').insert(twitData, function(err, result){
         if ( !err ) {
           return { msg: '' };
