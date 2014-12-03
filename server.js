@@ -15,10 +15,6 @@ var db = require('./database_config.js');
 //============================================================================
 
 // MUST BE ABOVE ROUTES--- I think <----- Remove when sure
-// app.use(function(req,res,next){
-//   req.db = db;
-//   next();
-// });
 
 app.use(function(req, res, next){
   res.set("Access-Control-Allow-Origin", "*");
