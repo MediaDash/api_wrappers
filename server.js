@@ -21,11 +21,9 @@ app.use(function(req,res,next){
 });
 
 app.use(function(req, res, next){
-  console.log(req.headers.host)
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.set("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-
   next();
 });
 
@@ -70,7 +68,6 @@ var port = process.env.PORT || 9393;    // set our port
 var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
-    "origins": '*',
     "transports": ["xhr-polling", "websockets"],
     "polling duration": 10
 });
