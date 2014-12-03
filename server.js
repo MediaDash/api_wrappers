@@ -75,7 +75,7 @@ var socket_io = require('socket.io')(http, {
     "polling duration": 10
 });
 
-var io = socket_io.listen(http, {log: false, origins:'*'});
+var io = socket_io.listen(http, {log: false, origins:'*:*'});
 
 console.log(http);
 
