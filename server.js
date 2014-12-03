@@ -186,7 +186,7 @@ app.get('/instaRecent', function(req, res, next) {
 // =============================================================================
 console.log('Server Up on Port ' + port);
 
-http.listen(443, function(){
+http.listen(3000, function(){
   console.log('listening on ' + port);
 });
 
