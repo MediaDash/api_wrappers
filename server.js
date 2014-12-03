@@ -15,8 +15,13 @@ var db = require('./database_config.js');
 //============================================================================
 
 // MUST BE ABOVE ROUTES--- I think <----- Remove when sure
+app.use(function(req,res,next){
+  req.db = db;
+  next();
+});
+
 app.use(function(req, res, next){
-  res.set("Access-Control-Allow-Origin", 'http://' + req.headers.host + ':443');
+  res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.set("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
 
@@ -64,11 +69,15 @@ var port = process.env.PORT || 9393;    // set our port
 var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
-    "transports": ["xhr-polling"],
+    "origins": '*',
+    "transports": ["xhr-polling", "websockets"],
     "polling duration": 10
 });
 
-var io = socket_io.listen(http)
+var io = socket_io.listen(http, {log: false, origins:'*'});
+
+console.log(http);
+
 
 // ROUTES FOR OUR API
 // =============================================================================
