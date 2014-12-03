@@ -88,6 +88,7 @@ app.get('/twitter', function(req, res, next) {
     } else {
       tweets = {};
     }
+    io.emit('tweets', 'hurray!');
     res.json(tweets);
   });
 });
