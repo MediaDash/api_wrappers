@@ -70,13 +70,11 @@ var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
     "origins": '*',
-    "transports": ["xhr-polling", "websockets"],
+    "transports": ['xhr-polling', 'websocket', 'json-polling', 'htmlfile', 'flashsocket'],
     "polling duration": 10
 });
 
 var io = socket_io.listen(http, {log: false, origins:'*'});
-
-console.log(http);
 
 
 // ROUTES FOR OUR API
