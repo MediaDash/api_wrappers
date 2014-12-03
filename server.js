@@ -15,10 +15,10 @@ var db = require('./database_config.js');
 //============================================================================
 
 // MUST BE ABOVE ROUTES--- I think <----- Remove when sure
-app.use(function(req,res,next){
-  req.db = db;
-  next();
-});
+// app.use(function(req,res,next){
+//   req.db = db;
+//   next();
+// });
 
 app.use(function(req, res, next){
   res.set("Access-Control-Allow-Origin", "*");
@@ -68,7 +68,12 @@ var port = process.env.PORT || 9393;    // set our port
 var server = app.listen(3000);
 var http = require('http').Server(app);
 var socket_io = require('socket.io')({
-    "transports": ["xhr-polling", "websockets"],
+    "transports": ['websocket',
+                  'flashsocket',
+                  'htmlfile',
+                  'xhr-polling',
+                  'jsonp-polling',
+                  'polling'],
     "polling duration": 10
 });
 
