@@ -21,6 +21,7 @@ app.use(function(req,res,next){
 });
 
 app.use(function(req, res, next){
+  console.log(req.headers.host)
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.set("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
@@ -67,16 +68,14 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 9393;    // set our port
 
 var server = app.listen(3000);
-var http = require('http').Server(app);
+var http = require('http').createServer(app);
 var socket_io = require('socket.io')({
     "origins": '*',
     "transports": ["xhr-polling", "websockets"],
     "polling duration": 10
 });
 
-var io = socket_io.listen(http, {log: false, origins:'*'});
-
-console.log(http);
+var io = socket_io.listen(http, {log: false, origins:'*:*'});
 
 // ROUTES FOR OUR API
 // =============================================================================
