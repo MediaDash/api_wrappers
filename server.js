@@ -15,6 +15,7 @@ var db = require('./database_config.js');
 //============================================================================
 
 // MUST BE ABOVE ROUTES--- I think <----- Remove when sure
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(function(req,res,next){
   req.db = db;
   next();
@@ -174,6 +175,13 @@ app.get('/instaRecent', function(req, res, next) {
   };
   ig.tag_media_recent(searchTag, longsearch);
 });
+
+app.post('/submit_hashtag', function(req, res, next) {
+  console.log(req.body);
+  res.json(req.body);
+  var term = req.body.term
+  io.emit('new_hashtag', term);
+})
 
 // START THE SERVER
 // =============================================================================
