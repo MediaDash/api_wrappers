@@ -15,8 +15,11 @@ var db = require('./database_config.js');
 //============================================================================
 
 // MUST BE ABOVE ROUTES--- I think <----- Remove when sure
-app.use(function(req,res,next){
-  req.db = db;
+app.use(function(req, res, next){
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.set("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+
   next();
 });
 
@@ -62,20 +65,18 @@ var server = app.listen(3000);
 var http = require('http').Server(app)
 var io = require('socket.io').listen(http)
 
+// var http = require('http').Server(app);
+// var socket_io = require('socket.io')({
+//     "origins": '*',
+//     "transports": ['xhr-polling', 'websocket', 'json-polling', 'htmlfile', 'flashsocket'],
+//     "polling duration": 10
+// });
+
+// var io = socket_io.listen(http, {log: false, origins:'*'});
+
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();
-
-app.use(function(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
-app.get('/', function(req, res, next){
-  res.redirect('http://localhost:9000/#/');
-  // res.sendfile('test.html');
-})
 
 app.get('/twitter', function(req, res, next) {
   var tweets, term;
@@ -86,6 +87,7 @@ app.get('/twitter', function(req, res, next) {
     } else {
       tweets = {};
     }
+    // io.emit('tweets', tweets);
     res.json(tweets);
   });
 });
@@ -98,15 +100,16 @@ app.get('/twitter_stream', function(req, res, next) {
   term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
-      io.emit('tweet', data);
+      console.log(data)
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
-      db.collection('term').insert(twitData, function(err, result){
-        if ( !err ) {
-          return { msg: '' };
-        } else {
-          return { msg: err };
-        }
-      });
+      io.emit('tweet', twitData);
+      // db.collection('term').insert(twitData, function(err, result){
+      //   if ( !err ) {
+      //     return { msg: '' };
+      //   } else {
+      //     return { msg: err };
+      //   }
+      // });
     });
   });
 });
@@ -116,6 +119,9 @@ app.get('/insta', function(req, res, next) {
   var searchTag;
   searchTag = req.query.term;
   ig.tag_media_recent(searchTag, function(err, result, pagination, remaining, limit){
+    if(err) {
+      console.log(err);
+    }
     if (result) {
       insta = parseInstaObject().parseInstaObjects(result);
     } else {
@@ -125,19 +131,65 @@ app.get('/insta', function(req, res, next) {
   });
 });
 
+
+app.get('/instaLatest', function(req, res, next) {
+  var searchTag, maxTimestamp, instas, instasAfterTime;
+  searchTag = req.query.term;
+  maxTimestamp = req.query.maxTimestamp;
+  instas = [];
+  var search = function(err, result, pagination, remainging, limit){
+    if(err) {
+      console.log(err);
+    }
+    instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
+    for ( var i = 0; i < instasAfterTime.length; i++ ) {
+      instas.push( instasAfterTime[i] );
+    }
+    res.json(instas);
+    };
+  ig.tag_media_recent(searchTag, search);
+});
+
+// Uses the InstagramId as the next search peram entered through query.
+// SHOULD BE DOCUMENTED!
+app.get('/instaRecent', function(req, res, next) {
+  var searchTag, maxTimestamp, instas, instasAfterTime, respondToClient;
+  searchTag = req.query.term;
+  maxTimestamp = req.query.maxTimestamp;
+  instas = [];
+  respondToClient = function() {
+    res.json(instas);
+  };
+  var longsearch = function(err, result, pagination, remainging, limit){
+    if(err) {
+      console.log(err);
+    } else {
+      instasAfterTime = parseInstaObject().parseInstaObjectsBeforeTime(result, maxTimestamp);
+      for ( var i = 0; i < instasAfterTime.length; i++ ) {
+        instas.push( instasAfterTime[i] );
+      }
+      if (instas.length < 101 || instasAfterTime === 0) {
+        pagination.next(longsearch);
+      } else {
+        respondToClient();
+      }
+    }
+  };
+  ig.tag_media_recent(searchTag, longsearch);
+});
+
+
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
 
 http.listen(port, function(){
-  console.log('listening on *:9393');
+  console.log('listening on ' + port);
 });
 
 io.on('connection', function(socket){
-    console.log("CONNECTED!!")
-    socket.on('tweet', function(data){
-      console.log(data);
-    });
+    console.log("CONNECTED!!");
 });
 
 module.exports = server;
+

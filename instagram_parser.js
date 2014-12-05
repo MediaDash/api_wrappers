@@ -32,6 +32,32 @@ module.exports = function () {
         instas.push( parseInstaObject( instagramObjects[i] ) );
       }
       return instas;
+    },
+
+    minTimestamp: function(instagramObjects) {
+      var minTimestamp = Date.now();
+      for ( var i = 0; i < instagramObjects.length; i++ ) {
+        var timestamp = parseInstaObject( instagramObjects[i] ).timestamp;
+        if (minTimestamp > timestamp){
+          minTimestamp = timestamp;
+        }
+      }
+      console.log(minTimestamp);
+      return minTimestamp
+    },
+
+    parseInstaObjectsBeforeTime: function(instagramObjects, timestamp) {
+      var instaObject;
+      var instas = [];
+      if ( instagramObjects && instagramObjects.length) {
+        for ( var i = 0; i < instagramObjects.length; i++ ) {
+          instaObject = parseInstaObject( instagramObjects[i] );
+          if (instaObject.timestamp > timestamp) {
+            instas.push( instaObject );
+          }
+        }
+      }
+      return instas;
     }
   };
 };
