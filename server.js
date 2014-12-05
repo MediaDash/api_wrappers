@@ -15,8 +15,11 @@ var db = require('./database_config.js');
 //============================================================================
 
 // MUST BE ABOVE ROUTES--- I think <----- Remove when sure
-app.use(function(req,res,next){
-  req.db = db;
+app.use(function(req, res, next){
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.set("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+
   next();
 });
 
@@ -59,23 +62,21 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 9393;    // set our port
 
 var server = app.listen(3000);
-var http = require('http').Server(app);
-var socket_io = require('socket.io')({
-    "transports": ["xhr-polling"],
-    "polling duration": 10
-});
+var http = require('http').Server(app)
+var io = require('socket.io').listen(http)
 
-var io = socket_io.listen(http);
+// var http = require('http').Server(app);
+// var socket_io = require('socket.io')({
+//     "origins": '*',
+//     "transports": ['xhr-polling', 'websocket', 'json-polling', 'htmlfile', 'flashsocket'],
+//     "polling duration": 10
+// });
+
+// var io = socket_io.listen(http, {log: false, origins:'*'});
 
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();
-
-app.use(function(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 
 app.get('/twitter', function(req, res, next) {
   var tweets, term;
@@ -86,6 +87,7 @@ app.get('/twitter', function(req, res, next) {
     } else {
       tweets = {};
     }
+    // io.emit('tweets', tweets);
     res.json(tweets);
   });
 });
@@ -98,6 +100,7 @@ app.get('/twitter_stream', function(req, res, next) {
   term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
     stream.on('data', function(data) {
+      console.log(data)
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
       io.emit('tweet', twitData);
       // db.collection('term').insert(twitData, function(err, result){
@@ -175,12 +178,13 @@ app.get('/instaRecent', function(req, res, next) {
   ig.tag_media_recent(searchTag, longsearch);
 });
 
+
 // START THE SERVER
 // =============================================================================
 console.log('Server Up on Port ' + port);
 
 http.listen(port, function(){
-  console.log('listening on *:9393');
+  console.log('listening on ' + port);
 });
 
 io.on('connection', function(socket){
@@ -188,3 +192,4 @@ io.on('connection', function(socket){
 });
 
 module.exports = server;
+
