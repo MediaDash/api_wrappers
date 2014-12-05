@@ -62,8 +62,8 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 9393;    // set our port
 
 var server = app.listen(3000);
-var http = require('http').Server(app)
-var io = require('socket.io').listen(http)
+var http = require('http').Server(app);
+var io = require('socket.io').listen(http);
 
 // var http = require('http').Server(app);
 // var socket_io = require('socket.io')({
@@ -99,10 +99,18 @@ app.get('/twitter_stream', function(req, res, next) {
   var term;
   term = req.query.term;
   twit.stream('statuses/filter', {track: '#' + term}, function(stream){
-    stream.on('data', function(data) {
-      console.log(data)
+    console.log('destroying...');
+    if (twit.currentStream) {
+      twit.currentStream.destroy();
+    }
+    stream.on('data', function(data, err) {
+      twit.currentStream = stream;
       var twitData = (tweetParser().parseTweets({"statuses": [data]}));
-      io.emit('tweet', twitData);
+      if (err) {
+        io.emit('tweet', err);
+      } else {
+        io.emit('tweet', twitData);
+      }
       // db.collection('term').insert(twitData, function(err, result){
       //   if ( !err ) {
       //     return { msg: '' };
